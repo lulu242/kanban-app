@@ -5,7 +5,7 @@ interface CartTitlePros {
   css?: string
 }
 
-const CardTitle: React.FC<CartTitlePros> = ({ children, css }) => {
+const CardTitle: React.FC<CartTitlePros> = ({ children, css}) => {
   return (
       <div className={css}>{children}</div>
   );

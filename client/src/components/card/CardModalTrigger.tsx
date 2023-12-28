@@ -10,7 +10,7 @@ const CardModalTrigger: React.FC<CardModalTriggerPros> = ({ children, css }) => 
   const { modalOpen } = useContext(CardContext)
 
   return (
-      <button className={css} onClick={modalOpen}>{children}</button>
+      <div className={css} onClick={modalOpen}>{children}</div>
   );
 };
 

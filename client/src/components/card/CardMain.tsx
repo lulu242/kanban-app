@@ -9,6 +9,7 @@ interface CardMainProps {
 export const CardContext = React.createContext({
   title: '',
   setTitle: (newInput: string) => {},
+  isModalOpen: false,
   modalOpen: () => {},
   modalClose: () => {}
 });
@@ -26,7 +27,7 @@ const CardMain: React.FC<CardMainProps> = ({ children, css = 'max-w-[300px] bg-w
   }
 
   return (
-    <CardContext.Provider value={{ title, setTitle, modalOpen, modalClose }}>
+    <CardContext.Provider value={{ title, setTitle, isModalOpen, modalOpen, modalClose }}>
       <div className={`${css} relative`}>
         {children}
       </div>
