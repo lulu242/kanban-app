@@ -1,0 +1,3 @@
+const board = [
+  'listid', 'listid'
+]
