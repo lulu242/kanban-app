@@ -1,9 +1,14 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { deleteList, getLists, postList, updateList } from "../controllers/lists.controllers";
 
 const listsRounter = express.Router()
 
-listsRounter.get('/', (req:Request, res:Response) => {
-  res.send('list')
-})
+listsRounter.get('/', getLists)
+
+listsRounter.post('/', postList)
+
+listsRounter.patch('/listId', updateList)
+
+listsRounter.delete('/:listId', deleteList)
 
 export default listsRounter
