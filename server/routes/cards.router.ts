@@ -1,13 +1,15 @@
 import express from "express";
-import { deleteCard, getCardById, postCard, updateCard } from "../controllers/cards.controllers";
+import { deleteCard, getAllCards, getCardById, getCompletedCards, getNotCompletedCards, postCard, updateCard } from "../controllers/cards.controllers";
 
 const cardsRounter = express.Router()
 
 cardsRounter.post('/:listId', postCard)
 
-// cardsRounter.get('/completed', (req:Request, res:Response) => {
-//   res.send('완료한 카드만')
-// })
+cardsRounter.get('/', getAllCards)
+
+cardsRounter.get('/completed', getCompletedCards)
+
+cardsRounter.get('/notcompleted', getNotCompletedCards)
 
 cardsRounter.get('/:cardId', getCardById)
 
