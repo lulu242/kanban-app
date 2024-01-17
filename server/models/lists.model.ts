@@ -1,7 +1,7 @@
 import mongoose, { Schema } from "mongoose";
 import { ICard } from "./cards.model"
 
-interface IList extends Document {
+export interface IList extends Document {
   title: string
   cards: ICard[]
 }
