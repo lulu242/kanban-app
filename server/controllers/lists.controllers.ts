@@ -1,23 +1,27 @@
 import { NextFunction, Request, Response } from "express";
 import List from "../models/lists.model";
+import User from "../models/user.model";
 
 
 
 async function postList(req: Request, res: Response, next: NextFunction) {
-  const createList = new List(req.body)
+  const newList = new List(req.body)
   try {
-    await createList.save();
+    await newList.save();
+    await User.findByIdAndUpdate()
   } catch (error) {
     return next(error);
   }
-  res.status(201).json(createList);
+  res.status(201).json(newList);
 }
 
 
 async function getLists(req: Request, res: Response, next: NextFunction) {
   try {
-    const allLists = await List.find({});
-    // const NotCompletedCards = allLists.map(list => list.)
+    const allLists = await List.find({}).populate({
+      path: 'cards',
+      match: { completed: false }
+    });
     res.status(200).json(allLists);
   } catch (error) {
     next(error);
