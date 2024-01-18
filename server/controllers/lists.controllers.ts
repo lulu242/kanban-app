@@ -3,29 +3,48 @@ import List from "../models/lists.model";
 import User from "../models/user.model";
 import mongoose from "mongoose";
 
-
+// TODO 로그인 jwt 수정 시 userId 수정해야함
 async function postList(req: Request, res: Response, next: NextFunction) {
-  const newList = new List(req.body)
+  const { title, user_id } = req.body 
+  const newList = new List({title, user_id})
+
+  let user
   try {
-    await newList.save();
-    await User.findByIdAndUpdate()
+    user = await User.findById(user_id)
   } catch (error) {
     return next(error);
   }
-  res.status(201).json(newList);
+
+  if(!user) {
+    return next()
+  }
+
+  try {
+    const sess = await mongoose.startSession()
+    sess.startTransaction()
+    await newList.save({session: sess})
+    user.lists.push(newList)
+    await user.save({session: sess})
+    await sess.commitTransaction()
+  } catch(error) {
+    return next(error)
+  }
+  res.status(201).json(newList.toObject({getters: true}));
 }
 
-
+// TODO: 로그인 jwt 수정하면 userId 부분 수정하기
 async function getLists(req: Request, res: Response, next: NextFunction) {
+  const user_id = new mongoose.Types.ObjectId(req.body.user_id)
+  let allLists
   try {
-    const allLists = await List.find({}).populate({
+    allLists = await List.find({user_id}).populate({
       path: 'cards',
       match: { completed: false }
     });
-    res.status(200).json(allLists);
   } catch (error) {
     next(error);
   }
+  res.status(200).json(allLists);
 }
 
 
