@@ -32,8 +32,9 @@ async function getLists(req: Request, res: Response, next: NextFunction) {
 async function updateList(req: Request, res: Response, next: NextFunction) {
   try {
     let updateList = await List.findByIdAndUpdate(
-      req.params.lidtId,
-      req.body
+      req.params.listId,
+      req.body,
+      { new: true }
     )
     if (updateList) {
       res.status(200).json(updateList);
@@ -47,10 +48,11 @@ async function updateList(req: Request, res: Response, next: NextFunction) {
 
 
 async function deleteList(req: Request, res: Response, next: NextFunction) {
+  
   try {
-    let updateList = await List.findByIdAndDelete(req.params.listId);
-    if (updateList) {
-      res.status(200).json(updateList);
+    let deletedList = await List.findByIdAndDelete(req.params.listId, { new: true });
+    if (deletedList) {
+      res.status(200).json(deletedList);
     } else {
       res.status(404).send();
     }

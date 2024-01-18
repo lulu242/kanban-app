@@ -7,7 +7,7 @@ listsRounter.get('/', getLists)
 
 listsRounter.post('/', postList)
 
-listsRounter.patch('/listId', updateList)
+listsRounter.patch('/:listId', updateList)
 
 listsRounter.delete('/:listId', deleteList)
 
