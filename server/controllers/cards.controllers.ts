@@ -1,13 +1,30 @@
 import { NextFunction, Request, Response } from "express";
 import Card from "../models/cards.model";
 import List from "../models/lists.model";
+import mongoose from "mongoose";
 
 
 async function postCard(req: Request, res: Response, next: NextFunction) {
   const newCard = new Card(req.body)
+
+  let list
   try {
-    await newCard.save();
-    await List.findByIdAndUpdate(req.params.listId, { $push: { cards: newCard._id } });
+    list  = await List.findById(req.params.listId);
+  } catch (error) {
+    return next(error);
+  }
+
+  if(!list) {
+    return next()
+  }
+
+  try {
+    const sess = await mongoose.startSession()
+    sess.startTransaction()
+    await newCard.save({session: sess});
+    list.cards.push(newCard);
+    await list.save({session: sess});
+    await sess.commitTransaction()
   } catch (error) {
     return next(error);
   }
