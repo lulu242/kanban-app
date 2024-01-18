@@ -12,7 +12,7 @@ export interface ICard extends Document {
   checklists: IChecklistItem[];
   label: string;
   completed: boolean;
-  listId: Schema.Types.ObjectId
+  list_id: Schema.Types.ObjectId
 }
 
 const checklistItemSchema: Schema = new Schema({
@@ -27,7 +27,7 @@ const cardSchema: Schema = new Schema({
   checklists: [checklistItemSchema],
   label: { type: String },
   completed: { type: Boolean, default: false },
-  listId: {type: Schema.Types.ObjectId, ref: 'List'}
+  list_id: {type: Schema.Types.ObjectId, ref: 'List'}
 });
 
 const Card = mongoose.model<ICard>('Card', cardSchema);
