@@ -3,13 +3,14 @@ import { IList } from "./lists.model";
 import uniqueValidator from "mongoose-unique-validator"
 
 interface IUser extends Document {
-  title: string
+  userId: string
+  password: string
   lists: IList[]
 }
 
 const userSchema: Schema = new Schema({
   userId: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String, required: true, minlength: 6 },
   lists: [{ type: Schema.Types.ObjectId, ref: 'List' }],
 });
 
