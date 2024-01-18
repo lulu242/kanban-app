@@ -5,11 +5,12 @@ import mongoose from "mongoose";
 
 
 async function postCard(req: Request, res: Response, next: NextFunction) {
-  const newCard = new Card(req.body)
+  const listId = req.params.listId
+  const newCard = new Card({...req.body, listId })
 
   let list
   try {
-    list  = await List.findById(req.params.listId);
+    list  = await List.findById(listId);
   } catch (error) {
     return next(error);
   }
