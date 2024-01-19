@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import Card from "../models/cards.model";
 import List from "../models/lists.model";
 import mongoose from "mongoose";
+import HttpError from "../models/http-error";
 
 
 async function postCard(req: Request, res: Response, next: NextFunction) {
@@ -12,11 +13,13 @@ async function postCard(req: Request, res: Response, next: NextFunction) {
   try {
     list  = await List.findById(listId);
   } catch (error) {
-    return next(error);
+    const err = new HttpError('find list failed', 500)
+    return next(err);
   }
 
   if(!list) {
-    return next()
+    const err = new HttpError('list not foundd', 401)
+    return next(err)
   }
 
   try {
@@ -27,82 +30,95 @@ async function postCard(req: Request, res: Response, next: NextFunction) {
     await list.save({session: sess});
     await sess.commitTransaction()
   } catch (error) {
-    return next(error);
+    const err = new HttpError('create card failed', 500)
+    return next(err);
   }
   res.status(201).json(newCard.toObject({ getters: true }));
 }
 
+// TODO: card userid로 한번터 필터링 후 (사용용도 생각해보고 필요하면 수정하기)
 async function getAllCards(req: Request, res: Response, next: NextFunction) {
   try {
     const allCards = await Card.find({});
-    res.status(200).json(allCards);
+    res.status(200).json(allCards.map(card => card.toObject()))
   } catch (error) {
-    next(error);
+    const err = new HttpError('get all cards failed', 500)
+    next(err);
   }
 }
-
+// TODO: card userid로 한번터 필터링 후 CompletedCards 검색
 async function getCompletedCards(req: Request, res: Response, next: NextFunction) {
+  let allCards
   try {
-    const allCards = await Card.find({ completed: true });
-    res.status(200).json(allCards);
+    allCards = await Card.find({ completed: true });
   } catch (error) {
-    next(error);
+    const err = new HttpError('get complted cards failed', 500)
+    next(err);
   }
+  res.status(200).json(allCards?.map(card => card.toObject({ getters: true })))
 }
 
+// TODO: card userid로 한번터 필터링 후 Not CompletedCards 검색
 async function getNotCompletedCards(req: Request, res: Response, next: NextFunction) {
+  let allCards
   try {
-    const allCards = await Card.find({ completed: false });
-    res.status(200).json(allCards);
+    allCards = await Card.find({ completed: false });
   } catch (error) {
-    next(error);
+    const err = new HttpError('get not complted cards failed', 500)
+    next(err);
   }
+  res.status(200).json(allCards?.map(card => card.toObject({ getters: true })));
 }
 
 async function getCardById(req: Request, res: Response, next: NextFunction) {
+  let card
   try {
-    const card = await Card.findById(req.params.cardId);
-    if (card) {
-      res.status(200).json(card.toObject({ getters: true }));
-    } else {
-      res.status(404).send();
+    card = await Card.findById(req.params.cardId);
+    if (!card) {
+      const err = new HttpError('invaild cardId', 401)
+      next(err)
     }
   } catch (error) {
-    next(error);
+    const err = new HttpError('get card by id failed', 500)
+    next(err);
   }
+  res.status(200).json(card?.toObject({ getters: true }));
 }
 
 
 async function updateCard(req: Request, res: Response, next: NextFunction) {
+  let updatedCard
   try {
-    let updatedCard = await Card.findByIdAndUpdate(
+    updatedCard = await Card.findByIdAndUpdate(
       req.params.cardId,
       req.body,
       { new: true }
     )
-
-    if (updatedCard) {
-      res.status(200).json(updatedCard);
-    } else {
-      res.status(404).send();
+    if (!updatedCard) {
+      const err = new HttpError('invaild cardId', 401)
+      next(err)
     }
   } catch (error) {
-    next(error);
+    const err = new HttpError('update card failed', 500)
+    next(err);
   }
+  res.status(200).json(updatedCard?.toObject({getters: true}));
 }
 
 
 async function deleteCard(req: Request, res: Response, next: NextFunction) {
+  let deletedCard
   try {
-    let deletedCard = await Card.findByIdAndDelete(req.params.cardId);
-    if (deletedCard) {
-      res.status(200).json(deletedCard);
-    } else {
-      res.status(404).send();
-    }
+    deletedCard = await Card.findByIdAndDelete(req.params.cardId);
+    if (!deletedCard) {
+      const err = new HttpError('invaild cardId', 401)
+      next(err)
+    } 
   } catch (error) {
+    const err = new HttpError('delete card failed', 500)
     next(error);
   }
+  res.status(200).json(deletedCard);
 }
 
 export { postCard, getAllCards, getCompletedCards, getNotCompletedCards, getCardById, updateCard, deleteCard }

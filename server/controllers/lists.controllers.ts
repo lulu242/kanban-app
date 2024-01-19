@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import List from "../models/lists.model";
 import User from "../models/user.model";
 import mongoose from "mongoose";
+import HttpError from "../models/http-error";
 
 // TODO 로그인 jwt 수정 시 userId 수정해야함
 async function postList(req: Request, res: Response, next: NextFunction) {
@@ -12,11 +13,13 @@ async function postList(req: Request, res: Response, next: NextFunction) {
   try {
     user = await User.findById(user_id)
   } catch (error) {
+    const err = new HttpError('create List failed', 500)
     return next(error);
   }
 
   if(!user) {
-    return next()
+    const err = new HttpError('user not exist', 401)
+    return next(err)
   }
 
   try {
@@ -27,7 +30,8 @@ async function postList(req: Request, res: Response, next: NextFunction) {
     await user.save({session: sess})
     await sess.commitTransaction()
   } catch(error) {
-    return next(error)
+    const err = new HttpError('create list failed', 500)
+    return next(err)
   }
   res.status(201).json(newList.toObject({getters: true}));
 }
@@ -42,9 +46,10 @@ async function getLists(req: Request, res: Response, next: NextFunction) {
       match: { completed: false }
     });
   } catch (error) {
-    next(error);
+    const err = new HttpError('get lists failed', 500)
+    next(err);
   }
-  res.status(200).json(allLists);
+  res.status(200).json(allLists?.map(list => list.toObject({getters: true})));
 }
 
 
@@ -56,7 +61,7 @@ async function updateList(req: Request, res: Response, next: NextFunction) {
       { new: true }
     )
     if (updateList) {
-      res.status(200).json(updateList);
+      res.status(200).json(updateList.toObject({getters: true}));
     } else {
       res.status(404).send();
     }
@@ -71,11 +76,13 @@ async function deleteList(req: Request, res: Response, next: NextFunction) {
   try {
     list = await List.findById(req.params.listId).populate('cards');
   } catch(error) {
-    return next(error)
+    const err = new HttpError('listId findById failed', 500)
+    return next(err)
   }
 
   if(!list) {
-    return next()
+    const err = new HttpError('invalid listId', 401)
+    return next(err)
   }
 
   try {
@@ -83,14 +90,14 @@ async function deleteList(req: Request, res: Response, next: NextFunction) {
     sess.startTransaction()
     await Promise.all(list.cards.map(async (card) => {
       await card.deleteOne({ session: sess });
-      console.log(card)
     }));
     await list.deleteOne({session: sess})
     await sess.commitTransaction()
   } catch (error) {
-    next(error);
+    const err = new HttpError('delete failed', 500)
+    next(err);
   }
-  res.status(200).send()
+  res.status(200).json({ message: 'Deleted list and card' })
 }
 
 export { postList, getLists, updateList, deleteList }
