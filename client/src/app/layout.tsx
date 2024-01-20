@@ -18,7 +18,6 @@ export default function RootLayout({
   return (
     <html lang="ko">
       <body className={noteSansKr.className}>
-        <Header />
         {children}
       </body>
     </html>
