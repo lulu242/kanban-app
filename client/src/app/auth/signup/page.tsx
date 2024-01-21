@@ -1,6 +1,7 @@
 'use client';
 import Button from '@/components/Button';
 import Link from 'next/link';
+import Input from '../../../components/Input';
 import React, { useState } from 'react';
 import { FaRegEye, FaRegEyeSlash } from 'react-icons/fa';
 
@@ -26,56 +27,43 @@ const SignupPage = () => {
     // 유효하면 ''
   };
 
-  const singUp = () => {
-  }
+  const singUp = () => {};
 
   return (
     <main className="bg-sky-900 h-screen text-white flex flex-col justify-center gap-7">
       <h1 className=" font-extrabold text-3xl text-center">Kanban Board</h1>
       <form className="flex flex-col gap-7 w-72 mx-auto">
         <div>
-          <label htmlFor="idInput" className="text-sm">
-            아이디
-          </label>
-          <input
+          <Input
+            id="signupIdInput"
             type="text"
             placeholder="아이디를 입력해주세요"
-            id="idInput"
-            className="w-full text-black p-1 rounded-sm my-2"
-            onBlur={(e: React.FocusEvent<HTMLInputElement, Element>) =>
-              idValidate(e.target.value)
-            }
-          ></input>
+            label="아이디"
+            onBlur={idValidate}
+          />
           <div className="text-xs">{idMessage}</div>
         </div>
-        <div>
-          <label htmlFor="passwordInput" className="text-sm">
-            비밀번호
-          </label>
-          <div className=" relative">
-            <input
-              type={passwordIsActive ? 'password' : 'text'}
-              placeholder="비밀번호를 입력해주세요"
-              id="passwordInput"
-              className="w-full text-black p-1 rounded-sm my-2"
-              onBlur={(e: React.FocusEvent<HTMLInputElement, Element>) =>
-                passwordValidate(e.target.value)
-              }
-            ></input>
-            {passwordIsActive ? (
-              <FaRegEyeSlash
-                size="20"
-                className="text-sky-900 absolute top-[calc(50%_-_10px)] right-1"
-                onClick={eyeIconHandler}
-              />
-            ) : (
-              <FaRegEye
-                size="20"
-                className="text-sky-900 absolute top-[calc(50%_-_10px)] right-1"
-                onClick={eyeIconHandler}
-              />
-            )}
-          </div>
+        <div className="relative">
+          <Input
+            id="signupPwInput"
+            label="비밀번호"
+            type={passwordIsActive ? 'password' : 'text'}
+            placeholder="비밀번호를 입력해주세요"
+            onBlur={passwordValidate}
+          />
+          {passwordIsActive ? (
+            <FaRegEyeSlash
+              size="20"
+              className="text-sky-900 absolute top-[38px] right-1"
+              onClick={eyeIconHandler}
+            />
+          ) : (
+            <FaRegEye
+              size="20"
+              className="text-sky-900 absolute top-[38px] right-1"
+              onClick={eyeIconHandler}
+            />
+          )}
           <div className="text-xs">{passwordMessage} </div>
         </div>
         <Button

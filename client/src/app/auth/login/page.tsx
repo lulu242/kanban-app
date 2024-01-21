@@ -1,5 +1,6 @@
 'use client';
 import Button from '@/components/Button';
+import Input from '@/components/Input';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
@@ -9,34 +10,24 @@ const LoginPage = () => {
   const login = () => {
     // 로그인 성공 main 페이지로 이동
     // 실패 setIsLoginError(false)
-  }
+  };
 
   return (
     <main className="bg-sky-900 h-screen text-white flex flex-col justify-center gap-7">
       <h1 className=" font-extrabold text-3xl text-center">Kanban Board</h1>
       <form className="flex flex-col gap-7 w-72 mx-auto">
-        <div>
-          <label htmlFor="idInput" className="text-sm">
-            아이디
-          </label>
-          <input
-            type="text"
-            placeholder="아이디를 입력해주세요"
-            id="idInput"
-            className="w-full text-black p-1 rounded-sm my-2"
-          ></input>
-        </div>
-        <div>
-          <label htmlFor="passwordInput" className="text-sm">
-            비밀번호
-          </label>
-          <input
-            type="password"
-            placeholder="비밀번호를 입력해주세요"
-            id="passwordInput"
-            className="w-full text-black p-1 rounded-sm my-2"
-          ></input>
-        </div>
+        <Input
+          id="loginIdInput"
+          type="text"
+          label="아이디"
+          placeholder="아이디를 입력해주세요"
+        />
+        <Input
+          id="loginPwInput"
+          type="password"
+          label="비밀번호"
+          placeholder="비밀번호를 입력해주세요"
+        />
         {isLoginError && (
           <div className="text-sm">
             아이디 또는 비밀번호를 잘못 입력했습니다. 입력하신 내용을 다시
