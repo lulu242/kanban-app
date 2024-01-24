@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
-import { Inter } from 'next/font/google'
+import { Noto_Sans_KR } from 'next/font/google'
 import './globals.css'
+import Header from '@/components/Header'
 
-const inter = Inter({ subsets: ['latin'] })
+const noteSansKr = Noto_Sans_KR({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
   title: 'Kanban',
@@ -16,7 +17,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="ko">
-      <body className={inter.className}>{children}</body>
+      <body className={noteSansKr.className}>
+        {children}
+      </body>
     </html>
   )
 }
