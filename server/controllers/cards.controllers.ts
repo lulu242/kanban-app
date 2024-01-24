@@ -3,9 +3,16 @@ import Card from "../models/cards.model";
 import List from "../models/lists.model";
 import mongoose from "mongoose";
 import HttpError from "../models/http-error";
+import { validationResult } from "express-validator";
 
 
 async function postCard(req: Request, res: Response, next: NextFunction) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()) {
+    const err = new HttpError('title is empty', 401)
+    return next(err);
+  }
+
   const listId = req.params.listId
   const newCard = new Card({...req.body, listId })
 
