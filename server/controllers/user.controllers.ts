@@ -1,9 +1,14 @@
 import { NextFunction, Request, Response } from "express";
 import User from "../models/user.model";
 import HttpError from "../models/http-error";
+import { validationResult } from "express-validator";
 
 
 async function signUp(req: Request, res: Response, next: NextFunction) {
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   const createUsre = new User(req.body)
   try {
     await createUsre.save();

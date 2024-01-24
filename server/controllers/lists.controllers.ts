@@ -3,9 +3,15 @@ import List from "../models/lists.model";
 import User from "../models/user.model";
 import mongoose from "mongoose";
 import HttpError from "../models/http-error";
+import { validationResult } from "express-validator";
 
 // TODO 로그인 jwt 수정 시 userId 수정해야함
 async function postList(req: Request, res: Response, next: NextFunction) {
+  const errors = validationResult(req)
+  if(!errors.isEmpty()) {
+    const err = new HttpError('title is empty', 401)
+    return next(err);
+  }
   const { title, user_id } = req.body 
   const newList = new List({title, user_id})
 

@@ -6,15 +6,21 @@ import mongoose from "mongoose";
 
 const app = express();
 
-const PORT = 3000;
+const PORT = 3001;
 
 app.use(express.json())
 
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Accexx-Control-Allow-Headers', 'Orgin, X-Requested-With, Content-Type, Accept, Authorization')
+  res.setHeader('Access-Control_Allow-Methods', 'GET, POST, PUT, DELETE')
+  next()
+})
 mongoose.connect('mongodb+srv://kanban:kanban3242@expressapp.btqyyca.mongodb.net/?retryWrites=true&w=majority')
   .then(() => console.log('db Connect'))
   .catch(err => console.log(err))
 
-app.get('/', (req:Request, res:Response) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('Welcome')
 })
 
